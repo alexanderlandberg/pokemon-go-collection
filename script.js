@@ -41,10 +41,7 @@ const generations = {
         roman: "VI",
         from: 650,
         to: 721
-    }
-}
-
-const extraGenerations = {
+    },
     7: {
         name: "Alola",
         roman: "VII",
@@ -59,25 +56,21 @@ const extraGenerations = {
     }
 }
 
-const extraPokemonArr = [808, 809, 862, 863, 865, 867]
-const notReleased = [352, 479, 489, 490, 492, 493, 570, 571, 619, 620, 621, 636, 637, 647, 648, 664, 665, 666, 669, 670, 671, 672, 673, 674, 675, 676, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 708, 709, 710, 711, 712, 713, 716, 717, 718, 719, 720, 721]
-
 let pokeData = {}
 
-
-// Init
+// --- Init ---
 function runScript() {
     addGenTabs()
     getPokemon()
 }
 
-// Add Generation Tabs
+// --- Add Generation Tabs ---
 function addGenTabs() {
 
     const newContainer = document.createElement("div");
     newContainer.setAttribute("id", "generation-tabs");
 
-    for (let i = -1; i < (Object.keys(generations).length + Object.keys(extraGenerations).length); i++) {
+    for (let i = -1; i < Object.keys(generations).length; i++) {
 
         const newDiv = document.createElement("div");
 
@@ -87,19 +80,13 @@ function addGenTabs() {
             newDiv.classList.add("selected");
             newDiv.innerHTML = "All pokemon";
 
-        } else if (i < Object.keys(generations).length) {
+        } else {
             newDiv.setAttribute("data-gen-roman", generations[i + 1].roman);
             newDiv.setAttribute("data-gen-number", (i + 1));
             newDiv.setAttribute("data-gen-name", generations[i + 1].name);
             newDiv.setAttribute("onClick", "filterGens(this)");
             newDiv.innerHTML = `Gen ${generations[i + 1].roman} <br> ${generations[i + 1].name}`;
 
-        } else {
-            newDiv.setAttribute("data-gen-roman", extraGenerations[i + 1].roman);
-            newDiv.setAttribute("data-gen-number", (i + 1));
-            newDiv.setAttribute("data-gen-name", extraGenerations[i + 1].name);
-            newDiv.setAttribute("onClick", "filterGens(this)");
-            newDiv.innerHTML = `Gen ${extraGenerations[i + 1].roman} <br> ${extraGenerations[i + 1].name}`;
         }
 
         newContainer.appendChild(newDiv);
@@ -108,24 +95,26 @@ function addGenTabs() {
     document.querySelector("#main").appendChild(newContainer);
 }
 
-// Get Pokemon
+// --- Get Pokemon ---
 async function getPokemon() {
 
     if (localStorage.getItem("myLocalPokedex") === null) {
 
-        let pokemonLimit = 721;
-        pokemonLimit = generations[Object.keys(generations).length].to;
-        // pokemonLimit = 10;
-
-        await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${pokemonLimit}`)
+        await fetch("https://pokemon-go1.p.rapidapi.com/released_pokemon.json", {
+            "method": "GET",
+            "headers": {
+                "x-rapidapi-key": "c38fe4d1c1msh480d6d3140fbf20p153674jsn8e19d5423dec",
+                "x-rapidapi-host": "pokemon-go1.p.rapidapi.com"
+            }
+        })
             .then(function (resp) {
                 return resp.json();
             })
             .then(async function (data) {
-                console.log(data)
-                // Gen 1-6 pokemon
-                for (const [i, element] of data.results.entries()) {
-                    await fetch(element.url)
+                console.log("data", data)
+                for (const [i, element] of Object.keys(data).entries()) {
+                    console.log(element)
+                    await fetch(`https://pokeapi.co/api/v2/pokemon/${element}/`)
                         .then(function (resp) {
                             return resp.json();
                         })
@@ -145,32 +134,7 @@ async function getPokemon() {
                             pokeData[data.id] = newPokeData;
                         })
                 }
-                // Gen 7 & 8 unique
-                console.log(extraPokemonArr);
-                for (let i = 0; i < extraPokemonArr.length; i++) {
-                    // console.log(i)
 
-                    await fetch(`https://pokeapi.co/api/v2/pokemon/${extraPokemonArr[i]}/`)
-                        .then(function (resp) {
-                            return resp.json();
-                        })
-                        .then(function (data) {
-
-                            addPokemon(data.id, data.name, data.sprites.front_default, data.types[0].type.name)
-
-                            // Set poke data
-                            let newPokeData = {
-                                number: data.id,
-                                name: data.name,
-                                img_default: data.sprites.front_default,
-                                img_shiny: data.sprites.front_shiny,
-                                type: data.types[0].type.name,
-                                state: "undiscovered"
-                            }
-                            pokeData[data.id] = newPokeData;
-                        })
-                }
-                // Add extra unique pokemon
             })
             .then(function () {
                 console.log("new data", pokeData)
@@ -182,7 +146,6 @@ async function getPokemon() {
         pokeData = localDex;
 
         for (let i = 0; i < Object.keys(pokeData).length; i++) {
-            // addPokemon(localDex[i + 1].number, localDex[i + 1].name, localDex[i + 1].img_default, localDex[i + 1].type, localDex[i + 1].state);
             addPokemon(pokeData[Object.keys(pokeData)[i]].number, pokeData[Object.keys(pokeData)[i]].name, pokeData[Object.keys(pokeData)[i]].img_default, pokeData[Object.keys(pokeData)[i]].type, pokeData[Object.keys(pokeData)[i]].state);
         }
 
@@ -190,20 +153,14 @@ async function getPokemon() {
 
 }
 
-// Add pokemon to DOM
+// --- Add pokemon to DOM ---
 function addPokemon(number, name, img, type, state) {
-
-    // console.log(number, name, img, type)
 
     const newDiv = document.createElement("div");
     newDiv.setAttribute("data-type", type);
     newDiv.setAttribute("data-name", name);
     newDiv.setAttribute("data-number", number);
-    if (notReleased.includes(number)) {
-        newDiv.setAttribute("data-not-released", "")
-    } else {
-        newDiv.setAttribute("onClick", "toggleState(this)");
-    }
+    newDiv.setAttribute("onClick", "toggleState(this)");
     const newImg = document.createElement("img");
     const newP = document.createElement("p");
     newImg.src = img;
@@ -213,46 +170,25 @@ function addPokemon(number, name, img, type, state) {
     newDiv.appendChild(newImg);
     newDiv.appendChild(newP);
 
-    if (number <= generations[Object.keys(generations).length].to) {
-        // Gen 1-6 pokemon
-        for (let i = 0; i < Object.keys(generations).length; i++) {
-            if ((number >= generations[i + 1].from && number <= generations[i + 1].to)) {
-                if (document.querySelector(`.gen_wrapper[data-gen-num="${i + 1}"]`) === null) {
-                    const newDiv2 = document.createElement("div");
-                    newDiv2.className = "gen_wrapper"
-                    newDiv2.setAttribute("data-gen-num", (i + 1))
-                    newDiv2.setAttribute("data-gen-name", generations[(i + 1)].name)
-                    newDiv2.innerHTML = `<div class="gen_title"><p>${generations[i + 1].name} (Gen ${i + 1})</p></div><div class="pokedex"></div>`
-                    document.querySelector("#main").appendChild(newDiv2);
-                }
-                break;
+    for (let i = 0; i < Object.keys(generations).length; i++) {
+        if ((number >= generations[i + 1].from && number <= generations[i + 1].to)) {
+            if (document.querySelector(`.gen_wrapper[data-gen-num="${i + 1}"]`) === null) {
+                const newDiv2 = document.createElement("div");
+                newDiv2.className = "gen_wrapper"
+                newDiv2.setAttribute("data-gen-num", (i + 1))
+                newDiv2.setAttribute("data-gen-name", generations[(i + 1)].name)
+                newDiv2.innerHTML = `<div class="gen_title"><p>${generations[i + 1].name} (Gen ${i + 1})</p></div><div class="pokedex"></div>`
+                document.querySelector("#main").appendChild(newDiv2);
             }
+            break;
         }
-    } else {
-        // Gen 7 & 8 unique
-        for (let i = 0; i < Object.keys(extraGenerations).length; i++) {
-            if ((number >= extraGenerations[Object.keys(extraGenerations)[i]].from && number <= extraGenerations[Object.keys(extraGenerations)[i]].to)) {
-                if (document.querySelector(`.gen_wrapper[data-gen-num="${i + 1 + Object.keys(generations).length}"]`) === null) {
-                    const newDiv2 = document.createElement("div");
-                    newDiv2.className = "gen_wrapper"
-                    newDiv2.setAttribute("data-gen-num", (i + 1 + Object.keys(generations).length))
-                    newDiv2.setAttribute("data-gen-name", extraGenerations[Object.keys(extraGenerations)[i]].name)
-                    newDiv2.innerHTML = `<div class="gen_title"><p>${extraGenerations[Object.keys(extraGenerations)[i]].name} (Gen ${i + 1 + Object.keys(generations).length})</p></div><div class="pokedex"></div>`
-
-                    document.querySelector("#main").appendChild(newDiv2);
-                }
-                break;
-            }
-        }
-
     }
-
 
     setState(newDiv, state);
     document.querySelector(".gen_wrapper:last-child .pokedex").appendChild(newDiv);
 }
 
-// Set pokemon state 
+// --- Set pokemon state ---
 function setState(pokemon, state) {
 
     if (state === "discovered") {
@@ -269,7 +205,7 @@ function setState(pokemon, state) {
     localStorage.setItem("myLocalPokedex", JSON.stringify(pokeData));
 }
 
-// Toggle pokemon state
+// --- Toggle pokemon state ---
 function toggleState(parm) {
 
     // console.log(parm)
@@ -427,60 +363,5 @@ function filterShowSilhouettes() {
     } else {
         document.querySelector("#main").classList.remove("show_silhouettes")
     }
-}
-
-
-function test() {
-    let numUndiscovered = 0;
-    let numDiscovered = 0;
-    let numShiny = 0;
-    let numElse = 0;
-
-    let numKanto = 0;
-    let numJohto = 0;
-    let numHoenn = 0;
-    let numSinnoh = 0;
-    let numUnova = 0;
-    let numKalos = 0;
-    let numAlola = 0;
-    let numGalar = 0;
-
-    for (let i = 0; i < Object.keys(pokeData).length; i++) {
-        // console.log(pokeData[Object.keys(pokeData)[i]])
-        if (pokeData[Object.keys(pokeData)[i]].state === "undiscovered") {
-            numUndiscovered++;
-        } else if (pokeData[Object.keys(pokeData)[i]].state === "discovered" || pokeData[Object.keys(pokeData)[i]].state === "shiny") {
-            numDiscovered++;
-
-            let id = pokeData[Object.keys(pokeData)[i]].number;
-
-            if (0 < id && id <= 151) {
-                numKanto++;
-            } else if (id <= 251) {
-                numJohto++;
-            } else if (id <= 386) {
-                numHoenn++;
-            } else if (id <= 493) {
-                numSinnoh++;
-            } else if (id <= 649) {
-                numUnova++;
-            } else if (id <= 721) {
-                numKalos++;
-                console.log("TEST", pokeData[Object.keys(pokeData)[i]].number, pokeData[Object.keys(pokeData)[i]].name)
-            } else if (id <= 809) {
-                numAlola++;
-            } else if (id <= 898) {
-                numGalar++;
-            }
-
-
-        } else if (pokeData[Object.keys(pokeData)[i]].state === "shiny") {
-            numShiny++;
-        } else {
-            numElse++;
-        }
-    }
-    // return [numUndiscovered, numDiscovered, numShiny, numElse];
-    return [numDiscovered, numKanto, numJohto, numHoenn, numSinnoh, numUnova, numKalos, numAlola, numGalar];
 }
 
