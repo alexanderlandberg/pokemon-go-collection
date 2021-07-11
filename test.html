@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script>
+        fetch("https://pokemon-go1.p.rapidapi.com/released_pokemon.json", {
+                "method": "GET",
+                "headers": {
+                    "x-rapidapi-key": "c38fe4d1c1msh480d6d3140fbf20p153674jsn8e19d5423dec",
+                    "x-rapidapi-host": "pokemon-go1.p.rapidapi.com"
+                }
+            })
+            .then(response => {
+                console.log(response);
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    </script>
+</body>
+
+</html>
