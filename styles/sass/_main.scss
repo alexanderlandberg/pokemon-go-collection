@@ -1,0 +1,22 @@
+html {
+    background: url('../img/bg.png');
+    background-repeat: repeat;
+    background-position: center top;
+}
+
+body {
+    min-height: 100vh;
+    background-color: $color-bg-light-opacity-low;
+    padding: 20px;
+    margin: 0;
+    font-family: $font-base;
+}
+
+#main {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.hide {
+    display: none !important;
+}

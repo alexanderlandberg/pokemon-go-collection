@@ -1,0 +1,59 @@
+.slidecheck {
+    height: 30px;
+    width: 60px;
+    border-radius: 15px;
+    background-color: $color-bg-light-opacity-high;
+    position: relative;
+    border: 2px solid $color-grey-dark;
+    box-sizing: border-box;
+    cursor: pointer;
+    margin: 0 auto;
+
+    >div {
+        position: absolute;
+        background-color: $color-accent;
+        height: 22px;
+        width: 22px;
+        margin: 2px;
+        border-radius: 15px;
+        left: 0;
+        transition: left 0.1s linear;
+    }
+
+    &.checked {
+        background-color: $color-accent;
+
+        >div {
+            background-color: $color-light;
+            left: 30px;
+        }
+    }
+
+    &.disabled {
+        background-color: $color-grey-light;
+        cursor: initial;
+
+        >div {
+            background-color: $color-grey-dark;
+            left: 0;
+        }
+    }
+}
+
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.flex-grow {
+    padding: 10px;
+    margin-bottom: 20px;
+    min-width: 200px;
+    flex-grow: 1;
+    flex-basis: 0;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}

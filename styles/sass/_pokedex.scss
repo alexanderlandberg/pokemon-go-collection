@@ -1,0 +1,170 @@
+#main.show_silhouettes .pokedex>div img {
+    filter: contrast(100%) brightness(100%);
+}
+
+.gen_wrapper {
+    background-color: $color-bg-medium-opacity;
+    margin-bottom: 30px;
+
+    .gen_title {
+        background-color: $color-accent;
+
+        >p {
+            text-align: center;
+            padding: 20px 0;
+            margin: 0;
+            color: $color-light;
+            font-weight: 400;
+            text-transform: uppercase;
+            font-size: 30px;
+        }
+    }
+
+    .pokedex {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 20px;
+
+        >div {
+            display: flex;
+            width: 70px;
+            height: 70px;
+            margin: 5px;
+            position: relative;
+
+            &.fade_discovered {
+                background: $color-light;
+                opacity: 0.3;
+                background: none;
+
+                >p {
+                    display: none;
+                }
+            }
+
+            .pokemon_img {
+                width: 100%;
+                position: absolute;
+                z-index: 1;
+                filter: contrast(0%) brightness(0%);
+                cursor: pointer;
+
+                &:hover {
+                    opacity: 0.4;
+                    filter: contrast(100%) brightness(100%);
+                }
+
+                &.discovered {
+                    filter: contrast(100%) brightness(100%);
+
+                    &:hover {
+                        opacity: 1;
+                        filter: contrast(100%) brightness(100%);
+                    }
+                }
+            }
+
+            .shiny_icon {
+                background: url(../img/shiny-icon.png);
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-position: center;
+                height: 18px;
+                width: 18px;
+                top: 3px;
+                right: 3px;
+                position: absolute;
+                z-index: 3;
+                pointer-events: none;
+            }
+
+            >p {
+                bottom: 0;
+                left: 0;
+                margin: 0;
+                padding: 2px 4px;
+                position: absolute;
+                font-size: 10px;
+                line-height: 12px;
+                background-color: $color-bg-dark-opacity;
+                color: $color-light;
+                z-index: 2;
+                pointer-events: none;
+            }
+        }
+
+    }
+}
+
+[data-type="grass"] {
+    background: $color-type-grass;
+}
+
+[data-type="fire"] {
+    background: $color-type-fire;
+}
+
+[data-type="water"] {
+    background: $color-type-water;
+}
+
+[data-type="bug"] {
+    background: $color-type-bug;
+}
+
+[data-type="normal"] {
+    background: $color-type-normal;
+}
+
+[data-type="poison"] {
+    background: $color-type-poison;
+}
+
+[data-type="electric"] {
+    background: $color-type-electric;
+}
+
+[data-type="ground"] {
+    background: $color-type-ground;
+}
+
+[data-type="fairy"] {
+    background: $color-type-fairy;
+}
+
+[data-type="fighting"] {
+    background: $color-type-fighting;
+}
+
+[data-type="psychic"] {
+    background: $color-type-psychic;
+}
+
+[data-type="rock"] {
+    background: $color-type-rock;
+}
+
+[data-type="ghost"] {
+    background: $color-type-ghost;
+}
+
+[data-type="ice"] {
+    background: $color-type-ice;
+}
+
+[data-type="dragon"] {
+    background: $color-type-dragon;
+}
+
+[data-type="dark"] {
+    background: $color-type-dark;
+}
+
+[data-type="steel"] {
+    background: $color-type-steel;
+}
+
+[data-type="flying"] {
+    background: $color-type-flying;
+}
